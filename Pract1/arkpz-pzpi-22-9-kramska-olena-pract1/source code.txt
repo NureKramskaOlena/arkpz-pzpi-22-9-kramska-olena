@@ -1,0 +1,126 @@
+1) Форматування коду
+До рефакторингу:
+int main()
+{
+    int x = 1;
+    if(x > 0) { printf("Positive"); } 
+    else { printf("Negative"); }
+}
+
+Після рефакторингу:
+int main()
+{
+    int x = 1;
+
+    if (x > 0) {
+        printf("Positive");
+    }
+    else {
+        printf("Negative");
+    }
+}
+
+2)Іменування змінних та функцій
+До рефакторингу:
+void Sum(int ts, int sc) {
+    int result = ts + sc;
+    printf("Sum: %d", result);
+}
+
+int main() {
+    int sc = 10;
+    int ts = 95;
+    Sum(ts, sc);
+
+    return 0;
+}
+
+Після рефакторингу:
+void calculateSum(int total_score, int student_count) {
+    int result = total_score + student_count;
+    printf("Sum: %d\n", result);
+}
+
+int main() {
+    int student_count = 10; 
+    int total_score = 95;
+
+    calculateSum(total_score, student_count);
+
+    return 0;
+}
+
+3) Локальні змінні
+До рефакторингу:
+int result;
+void calculate() {
+    result = 0; 
+    for (int i = 0; i < 10; i++) {
+        result += i;
+    }
+    printf("Sum: %d\n", result);
+}
+
+Після рефакторингу:
+void calculate() {
+    int result;
+    result = 0; 
+    for (int i = 0; i < 10; i++) {
+        result += i;
+    }
+    printf("Sum: %d\n", result);
+}
+
+4)Коментарі
+До рефакторингу:
+// наступна функція додає два числа
+int add(int a, int b) {
+    return a + b;
+}
+
+Після рефакторингу:
+/**
+ * @brief Додавання двух чисела.
+ * @param a Число 1.
+ * @param b Число 2.
+ * @return Сума двох чисел.
+ */
+int add(int a, int b) {
+    return a + b;
+}
+
+5)Використання констант та макросів
+До рефакторингу:
+int buffer[1024];
+
+Після рефакторингу:
+#define MAX_BUFFER_SIZE 1024
+int buffer[MAX_BUFFER_SIZE];
+
+6) Обробка помилок
+До рефакторингу:
+int main() {
+	FILE* file = fopen("data.txt", "r");
+	if (!file) return -1;
+}
+Після рефакторингу:
+int main() {
+    FILE* file = fopen("data.txt", "r");
+    if (!file) {
+        fprintf(stderr, "Error: Cannot open file\n");
+        return -1;
+    }
+}
+
+7) Тестування та налагодження
+До рефакторингу:
+int add(int a, int b) {
+    return a + b;
+}
+
+Після рефакторингу:
+#include <assert.h>
+
+void test_add() {
+    assert(add(2, 3) == 5);
+}
