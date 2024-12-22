@@ -1,1 +1,230 @@
+Міністерство освіти і науки України
+Харківський національний університет радіоелектроніки
+
+Кафедра програмної інженерії
+
+
+
+
+ЗВІТ
+з лабораторної роботи №2
+
+
+
+Виконала:                                                                                        Перевірив:
+ст. гр. ПЗПІ-22-9                                                                             Дашенков Д. С.
+Крамська Олена
+
+
+
+
+
+
+Харків 2024
+РОЗРОБКА БАЗИ ДАНИХ ДЛЯ СЕРВЕРНОЇ ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ ТА ПРИКЛАДНОГО ПРОГРАМНОГО ІНТЕРФЕЙСУ (API)
+
+1. Мета роботи
+     Розробити базу даних для серверної частини програмної системи та прикладного програмного інтерфейсу.
+
+2. Хід роботи
+     2.1 Текстовий опис інженерних рішень
+     Система використовує клієнт-серверну архітектуру. Серверна частина побудована на основі Node.js з використанням Express.js як веб-фреймворка для створення REST API. Для збереження даних була обрана база даних MySQL.
+	Компоненти серверної частини були реалізовані наступним чином: моделі представляють структуру даних для таблиць бази даних, контролери містять логіку обробки запитів від клієнтів, а маршрути  визначають кінцеві точки для взаємодії клієнтів із сервером. Підключення до БД реалізоване через mysql2 з використанням пулу з'єднань, а паролі успішно хешуються за допомогою бібліотеки bcrypt.
+     Було викокристано RESTful API для обміну даними між клієнтом і сервером та логування помилок та обробка винятків через HTTP статуси.
+     
+     
+     2.2 Специфікація API для взаємодії серверної частини з клієнтами
+     
+Базовий URL: http://localhost:3000/api/
+Формат даних: JSON
+Методи HTTP: GET, POST, PUT, DELETE
+Таблиця 1 – Приклади методів
+ GETPOSTPUTDELETEUsers/api/users/api/users/api/users/:id/api/users/:id  {
+  "username": "new_user",
+  "password": "secure_password",
+  "role": "operator",
+  "created_by": 1
+}{
+  "username": "updated_user",
+"password": "new_password",
+  "role": "operator"
+} Recipes/api/recipes/api/recipes/api/recipes/:id/api/recipes/:id  {
+  "name": "Біле вино",
+  "description": "Рецепт для білого сухого вина",
+  "target_temp": 18.5,
+  "target_sugar": 12.5,
+  "target_alcohol": 11.0,
+  "created_by": 1,
+  "container_id": 2
+}{
+  "name": "Оновлений рецепт",
+  "description": "Опис оновленого рецепту",
+  "target_temp": 19.0,
+  "target_sugar": 13.0,
+  "target_alcohol": 11.5,
+  "container_id": 3
+}
+ Sensors/api/sensors/api/sensors /api/sensors/:id  {
+  "sensor_name": "Температурний сенсор 1",
+  "sensor_type": "temperature",
+  "location": "Ємність 1",
+  "container_id": 1
+}  Sensor Readings/api/sensor-readings/api/sensor-readings /api/sensor-readings/:id  {
+  "sensor_id": 2,
+  "value": 23.5,
+  "recipe_id": 2
+}  Containers/api/containers/api/containers/api/containers/:id/api/containers/:id  {
+  "name": "Ємність 3",
+  "location": "Склад 3",
+  "capacity": 10000
+} {
+  "name": "Нова назва ємності",
+  "location": "Новий склад",
+  "capacity": 120.5
+} Reports/api/reports/api/reports /api/reports/:id  {
+  "name": "Звіт по рецепту 1",
+  "generated_by": 1,
+  "content": "Процес бродіння стабільний",
+  "recipe_id": 2,
+  "container_id": 1
+}  
+     3. Фрагменти програмного коду
+1) Логіка взаємодії серверної частини з БД на прикладі коду моделі ємності Container.js:
+const db = require('../db/connection');
+
+const Container = {
+  // Отримати всі ємності
+  getAll: () => db.promise().query('SELECT * FROM Containers'),
+
+  // Додати нову ємність
+  create: (name, location, capacity) => {
+    return db.promise().query(
+      'INSERT INTO Containers (name, location, capacity) VALUES (?, ?, ?)',
+      [name, location, capacity]
+    );
+  },
+
+  // Отримати ємність за ID
+  getById: (id) => db.promise().query('SELECT * FROM Containers WHERE container_id = ?', [id]),
+
+  // Видалити ємність
+  delete: (id) => db.promise().query('DELETE FROM Containers WHERE container_id = ?', [id]),
+};
+
+module.exports = Container;
+
+2) Логіка взаємодії серверної частини з клієнтами на прикладі коду контроллера для ємності containerController.js
+const Container = require('../models/Container');
+
+//отримання
+exports.getContainers = async (req, res) => {
+    try {
+      const [containers] = await Container.getAll();  
+      if (containers.length === 0) {
+        return res.status(200).json({ message: 'Ємності відсутні' });
+      }
+      res.status(200).json(containers);
+    } catch (err) {
+      res.status(500).json({ message: 'Помилка отримання ємностей', error: err.message });
+    }
+  };
+ 
+//створення  
+exports.createContainer = async (req, res) => {
+  const { name, location, capacity } = req.body;
+
+  try {
+    await Container.create(name, location, capacity);
+    res.status(201).json({ message: 'Ємність успішно створено' });
+  } catch (err) {
+    res.status(500).json({ message: 'Помилка створення ємності', error: err.message });
+  }
+};
+
+// оновлення ємності
+exports.updateContainer = async (req, res) => {
+  const { id } = req.params;
+  const { name, location, capacity } = req.body; 
+
+  try {
+    const result = await Container.update(id, name, location, capacity); 
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Ємність не знайдено' });
+    }
+    res.status(200).json({ message: 'Ємність успішно оновлено' });
+  } catch (err) {
+    res.status(500).json({ message: 'Помилка оновлення ємності', error: err.message });
+  }
+};
+
+// видалення ємності
+exports.deleteContainer = async (req, res) => {
+  const { id } = req.params; 
+
+  try {
+    const result = await Container.delete(id); 
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Ємність не знайдено' });
+    }
+    res.status(200).json({ message: 'Ємність успішно видалено' });
+  } catch (err) {
+    res.status(500).json({ message: 'Помилка видалення ємності', error: err.message });
+  }
+};
+
+
+3) Логика маршрутизації на прикладі коду маршрутів ємностей containerRoutes.js:
+const express = require('express');
+const router = express.Router();
+const containerController = require('../controllers/containerController');
+
+router.get('/', containerController.getContainers);             
+router.post('/', containerController.createContainer);          
+router.put('/:id', containerController.updateContainer);        
+router.delete('/:id', containerController.deleteContainer);     
+
+module.exports = router;
+
+
+
+4) Підключення маршрутів до сервера у файлі index.js:
+const express = require('express');
+const userRoutes = require('./routes/userRoutes');
+const sensorRoutes = require('./routes/sensorRoutes');
+const recipeRoutes = require('./routes/recipeRoutes');
+const sensorReadingRoutes = require('./routes/sensorReadingRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+const containerRoutes = require('./routes/containerRoutes');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+// Підключення маршрутів
+app.use('/api/users', userRoutes);
+app.use('/api/sensors', sensorRoutes);
+app.use('/api/recipes', recipeRoutes);
+app.use('/api/sensor-readings', sensorReadingRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/containers', containerRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущено на порті ${PORT}`);
+});
+
+
+     4. Графічні ілюстрації (рисунки)
+      - UML діаграма прецедентів для серверної частини; 
+
+Рисунок 1 – UML діаграма
+     - ER діаграма створеної БД:
+
+Рисунок 2 –  ER діаграма БД Winery
+     - Діаграма структури БД
+
+Рисунок 3 –  Діаграма структури БД Winery
+
+     Висновки: На поточній лабораторній роботі було розроблено базу даних для серверної частини програми моніторингу виробництва на виноробні та реалізовано запити до неї.
 
