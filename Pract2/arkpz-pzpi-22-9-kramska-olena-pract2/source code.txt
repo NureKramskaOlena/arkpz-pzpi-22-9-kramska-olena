@@ -1,0 +1,105 @@
+1) Replace Parameter with Explicit Methods
+До рефакторингу:
+switch(paymentMethod.ToUpper())
+{
+    case "Готівкою":
+        comboBox_PaymentMethod.SelectedIndex = 0;
+        break;
+    case "Безготівковий":
+        comboBox_PaymentMethod.SelectedIndex = 1;
+        break;
+    default:
+        comboBox_PaymentMethod.SelectedIndex = 0;
+        break;
+}
+Після рефакторингу:
+private void SetPaymentMethodCash()
+{
+    comboBox_PaymentMethod.SelectedIndex = 0;
+}
+
+private void SetPaymentMethodCard()
+{
+    comboBox_PaymentMethod.SelectedIndex = 1;
+}
+
+
+if (paymentMethod.ToUpper() == "Готівкою")
+    SetPaymentMethodCash();
+else if (paymentMethod.ToUpper() == "Безготівковий")
+    SetPaymentMethodCard();
+else
+    SetPaymentMethodCash();
+
+2) Preserve Whole Object
+До рефакторингу:
+public PaymentEditForm(int idPayment, DateTime paymentDate, 
+	string paymentTime, int paymentAmount, string paymentMethod, 
+	string paymentDetails, int reservationId)
+   	: this()
+{
+Після рефакторингу:
+public class PaymentData
+{
+    public int IdPayment { get; set; }
+    public DateTime PaymentDate { get; set; }
+    public string PaymentTime { get; set; }
+    public int PaymentAmount { get; set; }
+    public string PaymentMethod { get; set; }
+    public string PaymentDetails { get; set; }
+    public int ReservationId { get; set; }
+}
+
+public PaymentEditForm(PaymentData paymentData)
+    : this()
+{
+
+3) Separate Query from Modifier
+До рефакторингу:
+        private void button_Result1_Click(object sender, EventArgs e)
+        {
+            string connectionString = @"Data Source=DESKTOP;Initial Catalog=BeautySalonСoursework;Integrated Security=True";
+            string query = @"SELECT MONTH(payment.payment_date) 
+                           AS month, YEAR(payment.payment_date) 
+                           AS year, SUM(payment.payment_amount) 
+                           AS total_payment FROM payment GROUP BY MONTH(payment.payment_date), YEAR(payment.payment_date);";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                        connection.Open();
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+
+                        dataGridView_Result.DataSource = dataTable;
+                }
+            }
+        }
+Після рефакторингу:
+        private DataTable GetPaymentData()
+        {
+            string connectionString = @"Data Source=DESKTOP;Initial Catalog=BeautySalonСoursework;Integrated Security=True";
+            string query = @"SELECT MONTH(payment.payment_date) 
+                           AS month, YEAR(payment.payment_date) 
+                           AS year, SUM(payment.payment_amount) 
+                           AS total_payment FROM payment GROUP BY MONTH(payment.payment_date), YEAR(payment.payment_date);";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    return dataTable;
+                }
+            }
+        }
+
+        private void button_Result1_Click(object sender, EventArgs e)
+        {
+            dataGridView_Result.DataSource = GetPaymentData();
+        }
