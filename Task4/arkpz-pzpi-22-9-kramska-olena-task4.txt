@@ -1,1 +1,105 @@
+Міністерство освіти і науки України
+Харківський національний університет радіоелектроніки
 
+Кафедра програмної інженерії
+
+
+
+
+ЗВІТ
+з лабораторної роботи №4
+
+
+
+Виконала:                                                                                        Перевірив:
+ст. гр. ПЗПІ-22-9                                                                             Дашенков Д. С.
+Крамська Олена
+
+
+
+
+
+
+Харків 2024
+РОЗРОБКА IoT КЛІЄНТА (БІЗНЕС-ЛОГІКИ ТА ФУНКЦІЙ НАЛАШТУВАННЯ)
+
+1. Мета роботи
+     Розробити програмне забезпечення для IoT або SmartDevice пристрою, створеного на базі будь-якої поширеної на сьогодні платформи, придатної для реалізації вбудованих систем.
+     
+2. Хід роботи
+2.1 Налаштування IoT клієнта
+     IoT клієнт було зроблено у программному середовищі Tinkercad. Основою була плата Arduino Uno, до неї були приєднані температурний датчик TMP-32 для вимірювання температури та два потенціометра для симуляції показників рівня цукру та спирту.
+     Код на Arduino реалізує симуляцію вимірювання температури, рівня цукру та алкоголю, з подальшим виведенням значень у серійний монітор. 
+     Початково задаються значення температури, рівня цукру та алкоголю. Для кожного з цих параметрів використовується функція adjustValue, яка генерує випадкові зміни в межах заданих значень. Зміни можуть бути як позитивними, так і негативними, і вони обмежуються певними мінімальними та максимальними значеннями для кожного параметра. 
+     У циклі loop ці значення оновлюються в межах заданих діапазонів: температура від 15 до 40°C, рівень цукру від 2% до 20%, рівень алкоголю від 5% до 15%. Якщо значення виходять за встановлені межі (температура, цукор або алкоголь), виводяться попереджувальні повідомлення на серійний монітор. У серійному моніторі періодично виводяться поточні значення температури, рівня цукру та алкоголю кожну секунду з відповідними повідомленнями.
+     Код:
+const int tempPin = A0; 
+// Ініціалізація початкових значень
+float currentTemperature = 25.0; 
+float currentSugarLevel = 10.0; 
+float currentAlcoholLevel = 8.0; 
+
+// Функція для плавного зміщення значення
+float adjustValue(float currentValue, float minChange, float maxChange, float minValue, float maxValue) {
+  float change = random(minChange * 100, maxChange * 100) / 100.0; // Генерація змін
+  if (random(0, 2) == 0) change = -change; 
+  float newValue = currentValue + change;
+  if (newValue < minValue) newValue = minValue;
+  if (newValue > maxValue) newValue = maxValue;
+  return newValue;
+}
+void setup() {
+  Serial.begin(9600); 
+  randomSeed(analogRead(0));
+}
+void loop() {
+  // Оновлення значень з розширеним діапазоном
+  currentTemperature = adjustValue(currentTemperature, 0.5, 2.0, 15.0, 40.0);
+  currentSugarLevel = adjustValue(currentSugarLevel, 0.5, 2.0, 2.0, 20.0);   
+  currentAlcoholLevel = adjustValue(currentAlcoholLevel, 0.5, 1.0, 5.0, 15.0); 
+
+  // Перевірка на допустимі межі та виведення сповіщень
+  if (currentTemperature < 18.0) {
+    Serial.println("Warning: Temperature is low!");
+  } else if (currentTemperature > 35.0) {
+    Serial.println("Warning: Temperature is high!");
+  }
+
+  if (currentSugarLevel < 3.0) {
+    Serial.println("Warning: Sugar level is low!");
+  } else if (currentSugarLevel > 18.0) {
+    Serial.println("Warning: Sugar level is high!");
+  }
+
+  if (currentAlcoholLevel < 6.0) {
+    Serial.println("Warning: Alcohol level is low!");
+  } else if (currentAlcoholLevel > 14.0) {
+    Serial.println("Warning: Alcohol level is high!");
+  }
+
+  // Виведення значень у Serial Monitor
+  Serial.print("Temperature: ");
+  Serial.print(currentTemperature);
+  Serial.println(" C");
+
+  Serial.print("Sugar: ");
+  Serial.print(currentSugarLevel);
+  Serial.println(" %");
+
+  Serial.print("Alcohol: ");
+  Serial.print(currentAlcoholLevel);
+  Serial.println(" %");
+
+  Serial.println("----------------------");
+  delay(1000); // затримка 1с
+}
+
+
+Рисунок 1 – Результат роботи
+
+     2.2  Графічні ілюстрації (рисунки)
+       – UML діаграма діяльності ІоТ клієнта
+
+Рисунок 2 – UML діаграма діяльності ІоТ клієнта
+
+     Висновки: На поточній лабораторній роботі було зроблено IoT клієнт було у программному середовищі Tinkercad для програми моніторингу процесу виробництва на виноробні.
