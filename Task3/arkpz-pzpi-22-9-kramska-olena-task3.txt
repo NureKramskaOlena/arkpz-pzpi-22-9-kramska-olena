@@ -1,216 +1,229 @@
-Міністерство освіти і науки України
-Харківський національний університет радіоелектроніки
+РњС–РЅС–СЃС‚РµСЂСЃС‚РІРѕ РѕСЃРІС–С‚Рё С– РЅР°СѓРєРё РЈРєСЂР°С—РЅРё
+РҐР°СЂРєС–РІСЃСЊРєРёР№ РЅР°С†С–РѕРЅР°Р»СЊРЅРёР№ СѓРЅС–РІРµСЂСЃРёС‚РµС‚ СЂР°РґС–РѕРµР»РµРєС‚СЂРѕРЅС–РєРё
 
-Кафедра програмної інженерії
-
-
-
-
-ЗВІТ
-з лабораторної роботи №3
-
-
-
-Виконала:                                                                                        Перевірив:
-ст. гр. ПЗПІ-22-9                                                                             Дашенков Д. С.
-Крамська Олена
+РљР°С„РµРґСЂР° РїСЂРѕРіСЂР°РјРЅРѕС— С–РЅР¶РµРЅРµСЂС–С—
 
 
 
 
+Р—Р’Р†Рў
+Р· Р»Р°Р±РѕСЂР°С‚РѕСЂРЅРѕС— СЂРѕР±РѕС‚Рё в„–3
 
 
-Харків 2024
-РОЗРОБКА БІЗНЕС-ЛОГІКИ ТА ФУНКЦІЙ АДМІНІСТРУВАННЯ СЕРВЕРНОЇ ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ
 
-1. Мета роботи
-Розробити бізнес-логику та функції адміністрування серверної частини програмної системи
+Р’РёРєРѕРЅР°Р»Р°:                                                                                        РџРµСЂРµРІС–СЂРёРІ:
+СЃС‚. РіСЂ. РџР—РџР†-22-9                                                                             Р”Р°С€РµРЅРєРѕРІ Р”. РЎ.
+РљСЂР°РјСЃСЊРєР° РћР»РµРЅР°
 
-2. Хід роботи
-2.1 Опис оновлених рішень
-     1) Оновлення логіки для роботи з користувачами через перевірку ролі "власник" для дій з користувачами як додавання, оновлення та видалення користувачей. Додано повідомлення, якщо користувача не знайдено та відповідні повідомлення про заборону дій.
-     2) Оновлення логіки для роботи з рецептами через перевірку ролі "власник" для додавання, оновлення та видалення рецептів. Додані відповідні повідомлення.
-     3) Додаткові перевірки при додаванні рецепту (чи існує обраний контейнер та чи не зайнятий він іншим рецептом), оновленні рецепту (чи існує рецепт, чи новий контейнер існує та чи обраний контейнер не зайнятий іншим рецептом), видаленні рецепту (чи існує рецепт).
-     4) Оновлення логіки для роботи з сенсорами через перевірку ролі "власник" для додавання та видалення сенсорів.
-     5) Додаткові перевірки при додаванні сенсора (чи існує контейнер для додавання та чи контейнер вже має сенсор даного типу, бо у контейнері не може бути кількох сенсорів одного типу) та видаленні сенсора (перевірка чи існує сенсор)
-     6) Додано створення текстового файлу зі вже існуючого звіта з детальною інформацією про нього за допомогою модуля File System.
-     7) Додано логін користувачей з повідомленнями про успішний вхід або невірно введенні данні.
-     
-     2.2 Оновлена специфікація API для взаємодії серверної частини з клієнтами
-     
-Базовий URL: http://localhost:3000/api/
-Формат даних: JSON
-Методи HTTP: GET, POST, PUT, DELETE
 
-Таблиця 1 – Приклади методів
- GETPOSTPUTDELETEUsers/api/users/api/users/api/users/:id/api/users/:id  Всі{
-  "username": " user",
-  "password": " password",
+
+
+
+
+РҐР°СЂРєС–РІ 2024
+Р РћР—Р РћР‘РљРђ Р‘Р†Р—РќР•РЎ-Р›РћР“Р†РљР РўРђ Р¤РЈРќРљР¦Р†Р™ РђР”РњР†РќР†РЎРўР РЈР’РђРќРќРЇ РЎР•Р Р’Р•Р РќРћР‡ Р§РђРЎРўРРќР РџР РћР“Р РђРњРќРћР‡ РЎРРЎРўР•РњР
+
+1. РњРµС‚Р° СЂРѕР±РѕС‚Рё
+Р РѕР·СЂРѕР±РёС‚Рё Р±С–Р·РЅРµСЃ-Р»РѕРіРёРєСѓ С‚Р° С„СѓРЅРєС†С–С— Р°РґРјС–РЅС–СЃС‚СЂСѓРІР°РЅРЅСЏ СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё РїСЂРѕРіСЂР°РјРЅРѕС— СЃРёСЃС‚РµРјРё
+
+2. РҐС–Рґ СЂРѕР±РѕС‚Рё
+2.1 РћРїРёСЃ РѕРЅРѕРІР»РµРЅРёС… СЂС–С€РµРЅСЊ
+1) РћРЅРѕРІР»РµРЅРЅСЏ Р»РѕРіС–РєРё РґР»СЏ СЂРѕР±РѕС‚Рё Р· РєРѕСЂРёСЃС‚СѓРІР°С‡Р°РјРё С‡РµСЂРµР· РїРµСЂРµРІС–СЂРєСѓ СЂРѕР»С– "РІР»Р°СЃРЅРёРє" РґР»СЏ РґС–Р№ Р· РєРѕСЂРёСЃС‚СѓРІР°С‡Р°РјРё СЏРє РґРѕРґР°РІР°РЅРЅСЏ, РѕРЅРѕРІР»РµРЅРЅСЏ С‚Р° РІРёРґР°Р»РµРЅРЅСЏ РєРѕСЂРёСЃС‚СѓРІР°С‡РµР№. Р”РѕРґР°РЅРѕ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ, СЏРєС‰Рѕ РєРѕСЂРёСЃС‚СѓРІР°С‡Р° РЅРµ Р·РЅР°Р№РґРµРЅРѕ С‚Р° РІС–РґРїРѕРІС–РґРЅС– РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ РїСЂРѕ Р·Р°Р±РѕСЂРѕРЅСѓ РґС–Р№.
+2) РћРЅРѕРІР»РµРЅРЅСЏ Р»РѕРіС–РєРё РґР»СЏ СЂРѕР±РѕС‚Рё Р· СЂРµС†РµРїС‚Р°РјРё С‡РµСЂРµР· РїРµСЂРµРІС–СЂРєСѓ СЂРѕР»С– "РІР»Р°СЃРЅРёРє" РґР»СЏ РґРѕРґР°РІР°РЅРЅСЏ, РѕРЅРѕРІР»РµРЅРЅСЏ С‚Р° РІРёРґР°Р»РµРЅРЅСЏ СЂРµС†РµРїС‚С–РІ. Р”РѕРґР°РЅС– РІС–РґРїРѕРІС–РґРЅС– РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ.
+3) Р”РѕРґР°С‚РєРѕРІС– РїРµСЂРµРІС–СЂРєРё РїСЂРё РґРѕРґР°РІР°РЅРЅС– СЂРµС†РµРїС‚Сѓ (С‡Рё С–СЃРЅСѓС” РѕР±СЂР°РЅРёР№ РєРѕРЅС‚РµР№РЅРµСЂ С‚Р° С‡Рё РЅРµ Р·Р°Р№РЅСЏС‚РёР№ РІС–РЅ С–РЅС€РёРј СЂРµС†РµРїС‚РѕРј), РѕРЅРѕРІР»РµРЅРЅС– СЂРµС†РµРїС‚Сѓ (С‡Рё С–СЃРЅСѓС” СЂРµС†РµРїС‚, С‡Рё РЅРѕРІРёР№ РєРѕРЅС‚РµР№РЅРµСЂ С–СЃРЅСѓС” С‚Р° С‡Рё РѕР±СЂР°РЅРёР№ РєРѕРЅС‚РµР№РЅРµСЂ РЅРµ Р·Р°Р№РЅСЏС‚РёР№ С–РЅС€РёРј СЂРµС†РµРїС‚РѕРј), РІРёРґР°Р»РµРЅРЅС– СЂРµС†РµРїС‚Сѓ (С‡Рё С–СЃРЅСѓС” СЂРµС†РµРїС‚).
+4) РћРЅРѕРІР»РµРЅРЅСЏ Р»РѕРіС–РєРё РґР»СЏ СЂРѕР±РѕС‚Рё Р· СЃРµРЅСЃРѕСЂР°РјРё С‡РµСЂРµР· РїРµСЂРµРІС–СЂРєСѓ СЂРѕР»С– "РІР»Р°СЃРЅРёРє" РґР»СЏ РґРѕРґР°РІР°РЅРЅСЏ С‚Р° РІРёРґР°Р»РµРЅРЅСЏ СЃРµРЅСЃРѕСЂС–РІ.
+5) Р”РѕРґР°С‚РєРѕРІС– РїРµСЂРµРІС–СЂРєРё РїСЂРё РґРѕРґР°РІР°РЅРЅС– СЃРµРЅСЃРѕСЂР° (С‡Рё С–СЃРЅСѓС” РєРѕРЅС‚РµР№РЅРµСЂ РґР»СЏ РґРѕРґР°РІР°РЅРЅСЏ С‚Р° С‡Рё РєРѕРЅС‚РµР№РЅРµСЂ РІР¶Рµ РјР°С” СЃРµРЅСЃРѕСЂ РґР°РЅРѕРіРѕ С‚РёРїСѓ, Р±Рѕ Сѓ РєРѕРЅС‚РµР№РЅРµСЂС– РЅРµ РјРѕР¶Рµ Р±СѓС‚Рё РєС–Р»СЊРєРѕС… СЃРµРЅСЃРѕСЂС–РІ РѕРґРЅРѕРіРѕ С‚РёРїСѓ) С‚Р° РІРёРґР°Р»РµРЅРЅС– СЃРµРЅСЃРѕСЂР° (РїРµСЂРµРІС–СЂРєР° С‡Рё С–СЃРЅСѓС” СЃРµРЅСЃРѕСЂ)
+6) Р”РѕРґР°РЅРѕ СЃС‚РІРѕСЂРµРЅРЅСЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ С„Р°Р№Р»Сѓ Р·С– РІР¶Рµ С–СЃРЅСѓСЋС‡РѕРіРѕ Р·РІС–С‚Р° Р· РґРµС‚Р°Р»СЊРЅРѕСЋ С–РЅС„РѕСЂРјР°С†С–С”СЋ РїСЂРѕ РЅСЊРѕРіРѕ Р·Р° РґРѕРїРѕРјРѕРіРѕСЋ РјРѕРґСѓР»СЏ File System.
+7) Р”РѕРґР°РЅРѕ Р»РѕРіС–РЅ РєРѕСЂРёСЃС‚СѓРІР°С‡РµР№ Р· РїРѕРІС–РґРѕРјР»РµРЅРЅСЏРјРё РїСЂРѕ СѓСЃРїС–С€РЅРёР№ РІС…С–Рґ Р°Р±Рѕ РЅРµРІС–СЂРЅРѕ РІРІРµРґРµРЅРЅС– РґР°РЅРЅС–.
+
+2.2 РћРЅРѕРІР»РµРЅР° СЃРїРµС†РёС„С–РєР°С†С–СЏ API РґР»СЏ РІР·Р°С”РјРѕРґС–С— СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё Р· РєР»С–С”РЅС‚Р°РјРё
+
+Р‘Р°Р·РѕРІРёР№ URL: http://localhost:3000/api/
+Р¤РѕСЂРјР°С‚ РґР°РЅРёС…: JSON
+РњРµС‚РѕРґРё HTTP: GET, POST, PUT, DELETE
+
+РўР°Р±Р»РёС†СЏ 1 вЂ“ РџСЂРёРєР»Р°РґРё РјРµС‚РѕРґС–РІ
+ 	GET	POST	PUT	DELETE
+Users	/api/users	/api/users	/api/users/:id	/api/users/:id
+ 	 Р’СЃС–	{
+  "username": "user",
+  "password": "password",
   "role": "operator",
   "created_by": 1
-}{
+}	{
   "initiator_id": 1,
-  "username": "user16",
+  "username": "user17",
   "password": "password",
   "role": "operator"
-} {
+}	 {
   "initiator_id": 1
-}Recipes/api/recipes/api/recipes/api/recipes/:id/api/recipes/:id  Всі{
-  "name": "Тестовий рецепт номер три",
-  "description": "Опис рецепту",
+}
+Recipes	/api/recipes	/api/recipes	/api/recipes/:id	/api/recipes/:id
+ 	 Р’СЃС–	{
+  "name": "РўРµСЃС‚РѕРІРёР№ СЂРµС†РµРїС‚ РЅРѕРјРµСЂ С‚СЂРё",
+  "description": "РћРїРёСЃ СЂРµС†РµРїС‚Сѓ",
   "target_temp": 16.5,
   "target_sugar": 20.0,
   "target_alcohol": 10.0,
   "created_by": 1,
   "container_id": 9
-}{
-  "name": "Оновлений рецепт",
-  "description": "Оновлений опис",
+}	{
+  "name": "РћРЅРѕРІР»РµРЅРёР№ СЂРµС†РµРїС‚",
+  "description": "РћРЅРѕРІР»РµРЅРёР№ РѕРїРёСЃ",
   "target_temp": 22.5,
   "target_sugar": 14.0,
   "target_alcohol": 11.5,
   "container_id": 9,
   "updated_by": 1
-} {
+}	 {
   "deleted_by": 1
-}Sensors/api/sensors/api/sensors -----------------------/api/sensors/:id  Всі{
+}
+Sensors	/api/sensors	/api/sensors	 -----------------------	/api/sensors/:id
+ 	 Р’СЃС–	{
   "sensor_name": "Temperature Sensor 1",
   "sensor_type": "temperature",
   "location": "Tank 1",
   "container_id": 4,
   "created_by": 1
-} ---------------------- {
+}	 ----------------------	 {
   "deleted_by": 1
-}Sensor Readings/api/sensor-readings/api/sensor-readings -----------------------/api/sensor-readings/:id  Всі{
+}
+Sensor Readings	/api/sensor-readings	/api/sensor-readings	 -----------------------	/api/sensor-readings/:id
+ 	 Р’СЃС–	{
   "sensor_id": 2,
   "value": 23.5,
   "recipe_id": 2
-} ----------------------- Containers/api/containers/api/containers/api/containers/:id/api/containers/:id  Всі{
-  "name": "Ємність 10",
-  "location": "Склад 3",
+}	 -----------------------	 
+Containers	/api/containers	/api/containers	/api/containers/:id	/api/containers/:id
+ 	 Р’СЃС–	{
+  "name": "Р„РјРЅС–СЃС‚СЊ 10",
+  "location": "РЎРєР»Р°Рґ 3",
   "capacity": 10000
-} {
-  "name": "Ємність 10",
-  "location": "Новий склад",
+}	 {
+  "name": "Р„РјРЅС–СЃС‚СЊ 10",
+  "location": "РќРѕРІРёР№ СЃРєР»Р°Рґ",
   "capacity": 120.5
-} Reports/api/reports/api/reports --------------------/api/reports/:id  {
-  "name": "Звіт по рецепту",
+}	 
+Reports	/api/reports	/api/reports	 --------------------	/api/reports/:id
+ 	 	{
+  "name": "Р—РІС–С‚ РїРѕ СЂРµС†РµРїС‚Сѓ",
   "generated_by": 7,
-  "content": "Процес виробництва стабільний, відхилень від рецепту нема",
+  "content": "РџСЂРѕС†РµСЃ РІРёСЂРѕР±РЅРёС†С‚РІР° СЃС‚Р°Р±С–Р»СЊРЅРёР№, РІС–РґС…РёР»РµРЅСЊ РІС–Рґ СЂРµС†РµРїС‚Сѓ РЅРµРјР°",
   "recipe_id": 2,
   "container_id": 2
-} ----------------------- 
-- Створення текстового файлу звіта: 
+}	 -----------------------	 
+
+-	РЎС‚РІРѕСЂРµРЅРЅСЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ С„Р°Р№Р»Сѓ Р·РІС–С‚Р°: 
 GET http://localhost:3000/api/reports/:id/download
-- Логін користувачей:
+-	Р›РѕРіС–РЅ РєРѕСЂРёСЃС‚СѓРІР°С‡РµР№:
 POST http://localhost:3000/api/auth/login  
 {
   "username": "admin",
   "password": "admin"
 }
-     
-     3. Фрагменти програмного коду
-1) Перевірка на роль власника на прикладі фрагменту коду на створення рецепту з recipeController.js:
+
+3. Р¤СЂР°РіРјРµРЅС‚Рё РїСЂРѕРіСЂР°РјРЅРѕРіРѕ РєРѕРґСѓ
+1) РџРµСЂРµРІС–СЂРєР° РЅР° СЂРѕР»СЊ РІР»Р°СЃРЅРёРєР° РЅР° РїСЂРёРєР»Р°РґС– С„СЂР°РіРјРµРЅС‚Сѓ РєРѕРґСѓ РЅР° СЃС‚РІРѕСЂРµРЅРЅСЏ СЂРµС†РµРїС‚Сѓ Р· recipeController.js:
 exports.createRecipe = async (req, res) => {
-  const { name, description, target_temp, target_sugar, target_alcohol, created_by, container_id } = req.body;
+  const { name, description, target_temp, target_sugar, target_alcohol, created_by, container_id } = req.body;
 
-  try {
-    // перевірка, чи користувач є власником
-    const [user] = await User.getById(created_by);
-    if (!user || user[0].role !== 'owner') {
-      return res.status(403).json({ message: 'Доступ заборонено. Тільки власник може додавати рецепти.' });
-    }
+  try {
+    // РїРµСЂРµРІС–СЂРєР°, С‡Рё РєРѕСЂРёСЃС‚СѓРІР°С‡ С” РІР»Р°СЃРЅРёРєРѕРј
+    const [user] = await User.getById(created_by);
+    if (!user || user[0].role !== 'owner') {
+      return res.status(403).json({ message: 'Р”РѕСЃС‚СѓРї Р·Р°Р±РѕСЂРѕРЅРµРЅРѕ. РўС–Р»СЊРєРё РІР»Р°СЃРЅРёРє РјРѕР¶Рµ РґРѕРґР°РІР°С‚Рё СЂРµС†РµРїС‚Рё.' });
+    }
 
-    // перевірка існування контейнера
-    if (container_id) {
-      const [container] = await Container.getById(container_id);
-      if (!container || container.length === 0) {
-        return res.status(404).json({ message: 'Контейнер із вказаним ID не знайдений.' });
-      }
+    // РїРµСЂРµРІС–СЂРєР° С–СЃРЅСѓРІР°РЅРЅСЏ РєРѕРЅС‚РµР№РЅРµСЂР°
+    if (container_id) {
+      const [container] = await Container.getById(container_id);
+      if (!container || container.length === 0) {
+        return res.status(404).json({ message: 'РљРѕРЅС‚РµР№РЅРµСЂ С–Р· РІРєР°Р·Р°РЅРёРј ID РЅРµ Р·РЅР°Р№РґРµРЅРёР№.' });
+      }
 
-      // перевірка, чи контейнер вже прив’язаний до рецепту
-      const [existingRecipe] = await Recipe.getByContainerId(container_id);
-      if (existingRecipe && existingRecipe.length > 0) {
-        return res.status(400).json({ message: 'Контейнер вже прив’язаний до іншого рецепту.' });
-      }
-    }
+      // РїРµСЂРµРІС–СЂРєР°, С‡Рё РєРѕРЅС‚РµР№РЅРµСЂ РІР¶Рµ РїСЂРёРІвЂ™СЏР·Р°РЅРёР№ РґРѕ СЂРµС†РµРїС‚Сѓ
+      const [existingRecipe] = await Recipe.getByContainerId(container_id);
+      if (existingRecipe && existingRecipe.length > 0) {
+        return res.status(400).json({ message: 'РљРѕРЅС‚РµР№РЅРµСЂ РІР¶Рµ РїСЂРёРІвЂ™СЏР·Р°РЅРёР№ РґРѕ С–РЅС€РѕРіРѕ СЂРµС†РµРїС‚Сѓ.' });
+      }
+    }
 
-    // створення рецепту
-    await Recipe.create(name, description, target_temp, target_sugar, target_alcohol, created_by, container_id);
-    res.status(201).json({ message: 'Рецепт успішно створено.' });
-  } catch (err) {
-    res.status(500).json({ message: 'Помилка створення рецепту.', error: err.message });
-  }
+    // СЃС‚РІРѕСЂРµРЅРЅСЏ СЂРµС†РµРїС‚Сѓ
+    await Recipe.create(name, description, target_temp, target_sugar, target_alcohol, created_by, container_id);
+    res.status(201).json({ message: 'Р РµС†РµРїС‚ СѓСЃРїС–С€РЅРѕ СЃС‚РІРѕСЂРµРЅРѕ.' });
+  } catch (err) {
+    res.status(500).json({ message: 'РџРѕРјРёР»РєР° СЃС‚РІРѕСЂРµРЅРЅСЏ СЂРµС†РµРїС‚Сѓ.', error: err.message });
+  }
 };
 
-2) Cтворення текстового файлу звіта у reportController.js:
+2) CС‚РІРѕСЂРµРЅРЅСЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ С„Р°Р№Р»Сѓ Р·РІС–С‚Р° Сѓ reportController.js:
 
 exports.generateReportFile = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params;
 
-  try {
-    const [report] = await db.promise().query(`
-          SELECT 
-              r.report_id, 
-              r.name, 
-              r.content, 
-              r.created_at,
-              u.username AS generated_by,
-              c.name AS container_name, 
-              c.location AS container_location, 
-              c.capacity,
-              rec.name AS recipe_name
-          FROM Reports r
-          JOIN Users u ON r.generated_by = u.user_id
-          LEFT JOIN Containers c ON r.container_id = c.container_id
-          LEFT JOIN Recipes rec ON r.recipe_id = rec.recipe_id
-          WHERE r.report_id = ?
-      `, [id]);
+  try {
+    const [report] = await db.promise().query(`
+          SELECT 
+              r.report_id, 
+              r.name, 
+              r.content, 
+              r.created_at,
+              u.username AS generated_by,
+              c.name AS container_name, 
+              c.location AS container_location, 
+              c.capacity,
+              rec.name AS recipe_name
+          FROM Reports r
+          JOIN Users u ON r.generated_by = u.user_id
+          LEFT JOIN Containers c ON r.container_id = c.container_id
+          LEFT JOIN Recipes rec ON r.recipe_id = rec.recipe_id
+          WHERE r.report_id = ?
+      `, [id]);
 
-    if (report.length === 0) {
-      return res.status(404).json({ message: 'Звіт не знайдено' });
-    }
+    if (report.length === 0) {
+      return res.status(404).json({ message: 'Р—РІС–С‚ РЅРµ Р·РЅР°Р№РґРµРЅРѕ' });
+    }
 
-    const reportDetails = report[0];
+    const reportDetails = report[0];
 
-    const fileContent = `
-Звіт №${reportDetails.report_id}
-Назва звіту: ${reportDetails.name}
-Дата створення: ${new Date(reportDetails.created_at).toLocaleString()}
-Автор звіту: ${reportDetails.generated_by}
+    const fileContent = `
+Р—РІС–С‚ в„–${reportDetails.report_id}
+РќР°Р·РІР° Р·РІС–С‚Сѓ: ${reportDetails.name}
+Р”Р°С‚Р° СЃС‚РІРѕСЂРµРЅРЅСЏ: ${new Date(reportDetails.created_at).toLocaleString()}
+РђРІС‚РѕСЂ Р·РІС–С‚Сѓ: ${reportDetails.generated_by}
 
-Деталі контейнера:
-Назва: ${reportDetails.container_name || 'Не вказано'}
-Локація: ${reportDetails.container_location || 'Не вказано'}
-Місткість: ${reportDetails.capacity || 'Не вказано'}
+Р”РµС‚Р°Р»С– РєРѕРЅС‚РµР№РЅРµСЂР°:
+РќР°Р·РІР°: ${reportDetails.container_name || 'РќРµ РІРєР°Р·Р°РЅРѕ'}
+Р›РѕРєР°С†С–СЏ: ${reportDetails.container_location || 'РќРµ РІРєР°Р·Р°РЅРѕ'}
+РњС–СЃС‚РєС–СЃС‚СЊ: ${reportDetails.capacity || 'РќРµ РІРєР°Р·Р°РЅРѕ'}
 
-Деталі рецепту:
-Назва: ${reportDetails.recipe_name || 'Не вказано'}
+Р”РµС‚Р°Р»С– СЂРµС†РµРїС‚Сѓ:
+РќР°Р·РІР°: ${reportDetails.recipe_name || 'РќРµ РІРєР°Р·Р°РЅРѕ'}
 
-Зміст звіту:
+Р—РјС–СЃС‚ Р·РІС–С‚Сѓ:
 ${reportDetails.content}
-      `.trim();
+      `.trim();
 
-    const filePath = path.join(__dirname, '../downloads', `report_${id}.txt`);
+    const filePath = path.join(__dirname, '../downloads', `report_${id}.txt`);
 
-    fs.writeFileSync(filePath, fileContent, 'utf8');
-    res.download(filePath, `report_${id}.txt`, (err) => {
-      if (err) {
-        console.error('Помилка при завантаженні файлу:', err.message);
-        return res.status(500).json({ message: 'Помилка при завантаженні файлу' });
-      }
-      // fs.unlinkSync(filePath);
-    });
+    fs.writeFileSync(filePath, fileContent, 'utf8');
+    res.download(filePath, `report_${id}.txt`, (err) => {
+      if (err) {
+        console.error('РџРѕРјРёР»РєР° РїСЂРё Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅС– С„Р°Р№Р»Сѓ:', err.message);
+        return res.status(500).json({ message: 'РџРѕРјРёР»РєР° РїСЂРё Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅС– С„Р°Р№Р»Сѓ' });
+      }
+      // fs.unlinkSync(filePath);
+    });
 
-  } catch (err) {
-    console.error('Помилка створення текстового звіту:', err.message);
-    res.status(500).json({ message: 'Помилка створення текстового звіту', error: err.message });
-  }
+  } catch (err) {
+    console.error('РџРѕРјРёР»РєР° СЃС‚РІРѕСЂРµРЅРЅСЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ Р·РІС–С‚Сѓ:', err.message);
+    res.status(500).json({ message: 'РџРѕРјРёР»РєР° СЃС‚РІРѕСЂРµРЅРЅСЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ Р·РІС–С‚Сѓ', error: err.message });
+  }
 };
 
-     4. Графічні ілюстрації (рисунки)
-      - UML діаграма прецедентів для серверної частини; 
+4. Р“СЂР°С„С–С‡РЅС– С–Р»СЋСЃС‚СЂР°С†С–С— (СЂРёСЃСѓРЅРєРё)
+ - UML РґС–Р°РіСЂР°РјР° РїСЂРµС†РµРґРµРЅС‚С–РІ РґР»СЏ СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё; 
+ 
+Р РёСЃСѓРЅРѕРє 1 вЂ“ UML РґС–Р°РіСЂР°РјР°
 
-Рисунок 1 – UML діаграма
-
-Висновки: На поточній лабораторній роботі було розроблено бізнес логіку та функції адміністрування серверної частини програми моніторингу виробництва на виноробні, додано нові функції та перевірки.
+Р’РёСЃРЅРѕРІРєРё: РќР° РїРѕС‚РѕС‡РЅС–Р№ Р»Р°Р±РѕСЂР°С‚РѕСЂРЅС–Р№ СЂРѕР±РѕС‚С– Р±СѓР»Рѕ СЂРѕР·СЂРѕР±Р»РµРЅРѕ Р±С–Р·РЅРµСЃ Р»РѕРіС–РєСѓ С‚Р° С„СѓРЅРєС†С–С— Р°РґРјС–РЅС–СЃС‚СЂСѓРІР°РЅРЅСЏ СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё РїСЂРѕРіСЂР°РјРё РјРѕРЅС–С‚РѕСЂРёРЅРіСѓ РІРёСЂРѕР±РЅРёС†С‚РІР° РЅР° РІРёРЅРѕСЂРѕР±РЅС–, РґРѕРґР°РЅРѕ РЅРѕРІС– С„СѓРЅРєС†С–С— С‚Р° РїРµСЂРµРІС–СЂРєРё.
