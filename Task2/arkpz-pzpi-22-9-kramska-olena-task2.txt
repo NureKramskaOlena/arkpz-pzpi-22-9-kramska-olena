@@ -1,193 +1,205 @@
-Міністерство освіти і науки України
-Харківський національний університет радіоелектроніки
+РњС–РЅС–СЃС‚РµСЂСЃС‚РІРѕ РѕСЃРІС–С‚Рё С– РЅР°СѓРєРё РЈРєСЂР°С—РЅРё
+РҐР°СЂРєС–РІСЃСЊРєРёР№ РЅР°С†С–РѕРЅР°Р»СЊРЅРёР№ СѓРЅС–РІРµСЂСЃРёС‚РµС‚ СЂР°РґС–РѕРµР»РµРєС‚СЂРѕРЅС–РєРё
 
-Кафедра програмної інженерії
-
-
-
-
-ЗВІТ
-з лабораторної роботи №2
-
-
-
-Виконала:                                                                                        Перевірив:
-ст. гр. ПЗПІ-22-9                                                                             Дашенков Д. С.
-Крамська Олена
+РљР°С„РµРґСЂР° РїСЂРѕРіСЂР°РјРЅРѕС— С–РЅР¶РµРЅРµСЂС–С—
 
 
 
 
+Р—Р’Р†Рў
+Р· Р»Р°Р±РѕСЂР°С‚РѕСЂРЅРѕС— СЂРѕР±РѕС‚Рё в„–2
 
 
-Харків 2024
-РОЗРОБКА БАЗИ ДАНИХ ДЛЯ СЕРВЕРНОЇ ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ ТА ПРИКЛАДНОГО ПРОГРАМНОГО ІНТЕРФЕЙСУ (API)
 
-1. Мета роботи
-     Розробити базу даних для серверної частини програмної системи та прикладного програмного інтерфейсу.
+Р’РёРєРѕРЅР°Р»Р°:                                                                                        РџРµСЂРµРІС–СЂРёРІ:
+СЃС‚. РіСЂ. РџР—РџР†-22-9                                                                             Р”Р°С€РµРЅРєРѕРІ Р”. РЎ.
+РљСЂР°РјСЃСЊРєР° РћР»РµРЅР°
 
-2. Хід роботи
-     2.1 Текстовий опис інженерних рішень
-     Система використовує клієнт-серверну архітектуру. Серверна частина побудована на основі Node.js з використанням Express.js як веб-фреймворка для створення REST API. Для збереження даних була обрана база даних MySQL.
-	Компоненти серверної частини були реалізовані наступним чином: моделі представляють структуру даних для таблиць бази даних, контролери містять логіку обробки запитів від клієнтів, а маршрути  визначають кінцеві точки для взаємодії клієнтів із сервером. Підключення до БД реалізоване через mysql2 з використанням пулу з'єднань, а паролі успішно хешуються за допомогою бібліотеки bcrypt.
-     Було викокристано RESTful API для обміну даними між клієнтом і сервером та логування помилок та обробка винятків через HTTP статуси.
-     
-     
-     2.2 Специфікація API для взаємодії серверної частини з клієнтами
-     
-Базовий URL: http://localhost:3000/api/
-Формат даних: JSON
-Методи HTTP: GET, POST, PUT, DELETE
-Таблиця 1 – Приклади методів
- GETPOSTPUTDELETEUsers/api/users/api/users/api/users/:id/api/users/:id  {
+
+
+
+
+
+РҐР°СЂРєС–РІ 2024
+Р РћР—Р РћР‘РљРђ Р‘РђР—Р Р”РђРќРРҐ Р”Р›РЇ РЎР•Р Р’Р•Р РќРћР‡ Р§РђРЎРўРРќР РџР РћР“Р РђРњРќРћР‡ РЎРРЎРўР•РњР РўРђ РџР РРљР›РђР”РќРћР“Рћ РџР РћР“Р РђРњРќРћР“Рћ Р†РќРўР•Р Р¤Р•Р™РЎРЈ (API)
+
+1. РњРµС‚Р° СЂРѕР±РѕС‚Рё
+Р РѕР·СЂРѕР±РёС‚Рё Р±Р°Р·Сѓ РґР°РЅРёС… РґР»СЏ СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё РїСЂРѕРіСЂР°РјРЅРѕС— СЃРёСЃС‚РµРјРё С‚Р° РїСЂРёРєР»Р°РґРЅРѕРіРѕ РїСЂРѕРіСЂР°РјРЅРѕРіРѕ С–РЅС‚РµСЂС„РµР№СЃСѓ. 
+2. РҐС–Рґ СЂРѕР±РѕС‚Рё
+2.1 РўРµРєСЃС‚РѕРІРёР№ РѕРїРёСЃ С–РЅР¶РµРЅРµСЂРЅРёС… СЂС–С€РµРЅСЊ
+РЎРёСЃС‚РµРјР° РІРёРєРѕСЂРёСЃС‚РѕРІСѓС” РєР»С–С”РЅС‚-СЃРµСЂРІРµСЂРЅСѓ Р°СЂС…С–С‚РµРєС‚СѓСЂСѓ. РЎРµСЂРІРµСЂРЅР° С‡Р°СЃС‚РёРЅР° РїРѕР±СѓРґРѕРІР°РЅР° РЅР° РѕСЃРЅРѕРІС– Node.js Р· РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏРј Express.js СЏРє РІРµР±-С„СЂРµР№РјРІРѕСЂРєР° РґР»СЏ СЃС‚РІРѕСЂРµРЅРЅСЏ REST API. Р”Р»СЏ Р·Р±РµСЂРµР¶РµРЅРЅСЏ РґР°РЅРёС… Р±СѓР»Р° РѕР±СЂР°РЅР° Р±Р°Р·Р° РґР°РЅРёС… MySQL.
+	РљРѕРјРїРѕРЅРµРЅС‚Рё СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё Р±СѓР»Рё СЂРµР°Р»С–Р·РѕРІР°РЅС– РЅР°СЃС‚СѓРїРЅРёРј С‡РёРЅРѕРј: РјРѕРґРµР»С– РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‚СЊ СЃС‚СЂСѓРєС‚СѓСЂСѓ РґР°РЅРёС… РґР»СЏ С‚Р°Р±Р»РёС†СЊ Р±Р°Р·Рё РґР°РЅРёС…, РєРѕРЅС‚СЂРѕР»РµСЂРё РјС–СЃС‚СЏС‚СЊ Р»РѕРіС–РєСѓ РѕР±СЂРѕР±РєРё Р·Р°РїРёС‚С–РІ РІС–Рґ РєР»С–С”РЅС‚С–РІ, Р° РјР°СЂС€СЂСѓС‚Рё  РІРёР·РЅР°С‡Р°СЋС‚СЊ РєС–РЅС†РµРІС– С‚РѕС‡РєРё РґР»СЏ РІР·Р°С”РјРѕРґС–С— РєР»С–С”РЅС‚С–РІ С–Р· СЃРµСЂРІРµСЂРѕРј. РџС–РґРєР»СЋС‡РµРЅРЅСЏ РґРѕ Р‘Р” СЂРµР°Р»С–Р·РѕРІР°РЅРµ С‡РµСЂРµР· mysql2 Р· РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏРј РїСѓР»Сѓ Р·'С”РґРЅР°РЅСЊ, Р° РїР°СЂРѕР»С– СѓСЃРїС–С€РЅРѕ С…РµС€СѓСЋС‚СЊСЃСЏ Р·Р° РґРѕРїРѕРјРѕРіРѕСЋ Р±С–Р±Р»С–РѕС‚РµРєРё bcrypt.
+Р‘СѓР»Рѕ РІРёРєРѕРєСЂРёСЃС‚Р°РЅРѕ RESTful API РґР»СЏ РѕР±РјС–РЅСѓ РґР°РЅРёРјРё РјС–Р¶ РєР»С–С”РЅС‚РѕРј С– СЃРµСЂРІРµСЂРѕРј С‚Р° Р»РѕРіСѓРІР°РЅРЅСЏ РїРѕРјРёР»РѕРє С‚Р° РѕР±СЂРѕР±РєР° РІРёРЅСЏС‚РєС–РІ С‡РµСЂРµР· HTTP СЃС‚Р°С‚СѓСЃРё.
+
+
+2.2 РЎРїРµС†РёС„С–РєР°С†С–СЏ API РґР»СЏ РІР·Р°С”РјРѕРґС–С— СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё Р· РєР»С–С”РЅС‚Р°РјРё
+
+Р‘Р°Р·РѕРІРёР№ URL: http://localhost:3000/api/
+Р¤РѕСЂРјР°С‚ РґР°РЅРёС…: JSON
+РњРµС‚РѕРґРё HTTP: GET, POST, PUT, DELETE
+РўР°Р±Р»РёС†СЏ 1 вЂ“ РџСЂРёРєР»Р°РґРё РјРµС‚РѕРґС–РІ
+ 	GET	POST	PUT	DELETE
+Users	/api/users	/api/users	/api/users/:id	/api/users/:id
+ 	 	{
   "username": "new_user",
   "password": "secure_password",
   "role": "operator",
   "created_by": 1
-}{
+}	{
   "username": "updated_user",
 "password": "new_password",
   "role": "operator"
-} Recipes/api/recipes/api/recipes/api/recipes/:id/api/recipes/:id  {
-  "name": "Біле вино",
-  "description": "Рецепт для білого сухого вина",
+}	 
+Recipes	/api/recipes	/api/recipes	/api/recipes/:id	/api/recipes/:id
+ 	 	{
+  "name": "Р‘С–Р»Рµ РІРёРЅРѕ",
+  "description": "Р РµС†РµРїС‚ РґР»СЏ Р±С–Р»РѕРіРѕ СЃСѓС…РѕРіРѕ РІРёРЅР°",
   "target_temp": 18.5,
   "target_sugar": 12.5,
   "target_alcohol": 11.0,
   "created_by": 1,
   "container_id": 2
-}{
-  "name": "Оновлений рецепт",
-  "description": "Опис оновленого рецепту",
+}	{
+  "name": "РћРЅРѕРІР»РµРЅРёР№ СЂРµС†РµРїС‚",
+  "description": "РћРїРёСЃ РѕРЅРѕРІР»РµРЅРѕРіРѕ СЂРµС†РµРїС‚Сѓ",
   "target_temp": 19.0,
   "target_sugar": 13.0,
   "target_alcohol": 11.5,
   "container_id": 3
 }
- Sensors/api/sensors/api/sensors /api/sensors/:id  {
-  "sensor_name": "Температурний сенсор 1",
+	 
+Sensors	/api/sensors	/api/sensors	 	/api/sensors/:id
+ 	 	{
+  "sensor_name": "РўРµРјРїРµСЂР°С‚СѓСЂРЅРёР№ СЃРµРЅСЃРѕСЂ 1",
   "sensor_type": "temperature",
-  "location": "Ємність 1",
+  "location": "Р„РјРЅС–СЃС‚СЊ 1",
   "container_id": 1
-}  Sensor Readings/api/sensor-readings/api/sensor-readings /api/sensor-readings/:id  {
+}	 	 
+Sensor Readings	/api/sensor-readings	/api/sensor-readings	 	/api/sensor-readings/:id
+ 	 	{
   "sensor_id": 2,
   "value": 23.5,
   "recipe_id": 2
-}  Containers/api/containers/api/containers/api/containers/:id/api/containers/:id  {
-  "name": "Ємність 3",
-  "location": "Склад 3",
+}	 	 
+Containers	/api/containers	/api/containers	/api/containers/:id	/api/containers/:id
+ 	 	{
+  "name": "Р„РјРЅС–СЃС‚СЊ 3",
+  "location": "РЎРєР»Р°Рґ 3",
   "capacity": 10000
-} {
-  "name": "Нова назва ємності",
-  "location": "Новий склад",
+}	 {
+  "name": "РќРѕРІР° РЅР°Р·РІР° С”РјРЅРѕСЃС‚С–",
+  "location": "РќРѕРІРёР№ СЃРєР»Р°Рґ",
   "capacity": 120.5
-} Reports/api/reports/api/reports /api/reports/:id  {
-  "name": "Звіт по рецепту 1",
+}	 
+Reports	/api/reports	/api/reports	 	/api/reports/:id
+ 	 	{
+  "name": "Р—РІС–С‚ РїРѕ СЂРµС†РµРїС‚Сѓ 1",
   "generated_by": 1,
-  "content": "Процес бродіння стабільний",
+  "content": "РџСЂРѕС†РµСЃ Р±СЂРѕРґС–РЅРЅСЏ СЃС‚Р°Р±С–Р»СЊРЅРёР№",
   "recipe_id": 2,
   "container_id": 1
-}  
-     3. Фрагменти програмного коду
-1) Логіка взаємодії серверної частини з БД на прикладі коду моделі ємності Container.js:
+}	 	 
+
+3. Р¤СЂР°РіРјРµРЅС‚Рё РїСЂРѕРіСЂР°РјРЅРѕРіРѕ РєРѕРґСѓ
+1) Р›РѕРіС–РєР° РІР·Р°С”РјРѕРґС–С— СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё Р· Р‘Р” РЅР° РїСЂРёРєР»Р°РґС– РєРѕРґСѓ РјРѕРґРµР»С– С”РјРЅРѕСЃС‚С– Container.js:
 const db = require('../db/connection');
 
 const Container = {
-  // Отримати всі ємності
-  getAll: () => db.promise().query('SELECT * FROM Containers'),
+  // РћС‚СЂРёРјР°С‚Рё РІСЃС– С”РјРЅРѕСЃС‚С–
+  getAll: () => db.promise().query('SELECT * FROM Containers'),
 
-  // Додати нову ємність
-  create: (name, location, capacity) => {
-    return db.promise().query(
-      'INSERT INTO Containers (name, location, capacity) VALUES (?, ?, ?)',
-      [name, location, capacity]
-    );
-  },
+  // Р”РѕРґР°С‚Рё РЅРѕРІСѓ С”РјРЅС–СЃС‚СЊ
+  create: (name, location, capacity) => {
+    return db.promise().query(
+      'INSERT INTO Containers (name, location, capacity) VALUES (?, ?, ?)',
+      [name, location, capacity]
+    );
+  },
 
-  // Отримати ємність за ID
-  getById: (id) => db.promise().query('SELECT * FROM Containers WHERE container_id = ?', [id]),
+  // РћС‚СЂРёРјР°С‚Рё С”РјРЅС–СЃС‚СЊ Р·Р° ID
+  getById: (id) => db.promise().query('SELECT * FROM Containers WHERE container_id = ?', [id]),
 
-  // Видалити ємність
-  delete: (id) => db.promise().query('DELETE FROM Containers WHERE container_id = ?', [id]),
+  // Р’РёРґР°Р»РёС‚Рё С”РјРЅС–СЃС‚СЊ
+  delete: (id) => db.promise().query('DELETE FROM Containers WHERE container_id = ?', [id]),
 };
 
 module.exports = Container;
 
-2) Логіка взаємодії серверної частини з клієнтами на прикладі коду контроллера для ємності containerController.js
+2) Р›РѕРіС–РєР° РІР·Р°С”РјРѕРґС–С— СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё Р· РєР»С–С”РЅС‚Р°РјРё РЅР° РїСЂРёРєР»Р°РґС– РєРѕРґСѓ РєРѕРЅС‚СЂРѕР»Р»РµСЂР° РґР»СЏ С”РјРЅРѕСЃС‚С– containerController.js
 const Container = require('../models/Container');
 
-//отримання
+//РѕС‚СЂРёРјР°РЅРЅСЏ
 exports.getContainers = async (req, res) => {
-    try {
-      const [containers] = await Container.getAll();  
-      if (containers.length === 0) {
-        return res.status(200).json({ message: 'Ємності відсутні' });
-      }
-      res.status(200).json(containers);
-    } catch (err) {
-      res.status(500).json({ message: 'Помилка отримання ємностей', error: err.message });
-    }
-  };
- 
-//створення  
+    try {
+      const [containers] = await Container.getAll();  
+      if (containers.length === 0) {
+        return res.status(200).json({ message: 'Р„РјРЅРѕСЃС‚С– РІС–РґСЃСѓС‚РЅС–' });
+      }
+      res.status(200).json(containers);
+    } catch (err) {
+      res.status(500).json({ message: 'РџРѕРјРёР»РєР° РѕС‚СЂРёРјР°РЅРЅСЏ С”РјРЅРѕСЃС‚РµР№', error: err.message });
+    }
+  };
+ 
+//СЃС‚РІРѕСЂРµРЅРЅСЏ  
 exports.createContainer = async (req, res) => {
-  const { name, location, capacity } = req.body;
+  const { name, location, capacity } = req.body;
 
-  try {
-    await Container.create(name, location, capacity);
-    res.status(201).json({ message: 'Ємність успішно створено' });
-  } catch (err) {
-    res.status(500).json({ message: 'Помилка створення ємності', error: err.message });
-  }
+  try {
+    await Container.create(name, location, capacity);
+    res.status(201).json({ message: 'Р„РјРЅС–СЃС‚СЊ СѓСЃРїС–С€РЅРѕ СЃС‚РІРѕСЂРµРЅРѕ' });
+  } catch (err) {
+    res.status(500).json({ message: 'РџРѕРјРёР»РєР° СЃС‚РІРѕСЂРµРЅРЅСЏ С”РјРЅРѕСЃС‚С–', error: err.message });
+  }
 };
 
-// оновлення ємності
+// РѕРЅРѕРІР»РµРЅРЅСЏ С”РјРЅРѕСЃС‚С–
 exports.updateContainer = async (req, res) => {
-  const { id } = req.params;
-  const { name, location, capacity } = req.body; 
+  const { id } = req.params;
+  const { name, location, capacity } = req.body; 
 
-  try {
-    const result = await Container.update(id, name, location, capacity); 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Ємність не знайдено' });
-    }
-    res.status(200).json({ message: 'Ємність успішно оновлено' });
-  } catch (err) {
-    res.status(500).json({ message: 'Помилка оновлення ємності', error: err.message });
-  }
+  try {
+    const result = await Container.update(id, name, location, capacity); 
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Р„РјРЅС–СЃС‚СЊ РЅРµ Р·РЅР°Р№РґРµРЅРѕ' });
+    }
+    res.status(200).json({ message: 'Р„РјРЅС–СЃС‚СЊ СѓСЃРїС–С€РЅРѕ РѕРЅРѕРІР»РµРЅРѕ' });
+  } catch (err) {
+    res.status(500).json({ message: 'РџРѕРјРёР»РєР° РѕРЅРѕРІР»РµРЅРЅСЏ С”РјРЅРѕСЃС‚С–', error: err.message });
+  }
 };
 
-// видалення ємності
+// РІРёРґР°Р»РµРЅРЅСЏ С”РјРЅРѕСЃС‚С–
 exports.deleteContainer = async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params; 
 
-  try {
-    const result = await Container.delete(id); 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Ємність не знайдено' });
-    }
-    res.status(200).json({ message: 'Ємність успішно видалено' });
-  } catch (err) {
-    res.status(500).json({ message: 'Помилка видалення ємності', error: err.message });
-  }
+  try {
+    const result = await Container.delete(id); 
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Р„РјРЅС–СЃС‚СЊ РЅРµ Р·РЅР°Р№РґРµРЅРѕ' });
+    }
+    res.status(200).json({ message: 'Р„РјРЅС–СЃС‚СЊ СѓСЃРїС–С€РЅРѕ РІРёРґР°Р»РµРЅРѕ' });
+  } catch (err) {
+    res.status(500).json({ message: 'РџРѕРјРёР»РєР° РІРёРґР°Р»РµРЅРЅСЏ С”РјРЅРѕСЃС‚С–', error: err.message });
+  }
 };
 
 
-3) Логика маршрутизації на прикладі коду маршрутів ємностей containerRoutes.js:
+3) Р›РѕРіРёРєР° РјР°СЂС€СЂСѓС‚РёР·Р°С†С–С— РЅР° РїСЂРёРєР»Р°РґС– РєРѕРґСѓ РјР°СЂС€СЂСѓС‚С–РІ С”РјРЅРѕСЃС‚РµР№ containerRoutes.js:
 const express = require('express');
 const router = express.Router();
 const containerController = require('../controllers/containerController');
 
-router.get('/', containerController.getContainers);             
-router.post('/', containerController.createContainer);          
-router.put('/:id', containerController.updateContainer);        
-router.delete('/:id', containerController.deleteContainer);     
+router.get('/', containerController.getContainers);             
+router.post('/', containerController.createContainer);          
+router.put('/:id', containerController.updateContainer);        
+router.delete('/:id', containerController.deleteContainer);     
 
 module.exports = router;
 
 
 
-4) Підключення маршрутів до сервера у файлі index.js:
+4) РџС–РґРєР»СЋС‡РµРЅРЅСЏ РјР°СЂС€СЂСѓС‚С–РІ РґРѕ СЃРµСЂРІРµСЂР° Сѓ С„Р°Р№Р»С– index.js:
 const express = require('express');
 const userRoutes = require('./routes/userRoutes');
 const sensorRoutes = require('./routes/sensorRoutes');
@@ -202,7 +214,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Підключення маршрутів
+// РџС–РґРєР»СЋС‡РµРЅРЅСЏ РјР°СЂС€СЂСѓС‚С–РІ
 app.use('/api/users', userRoutes);
 app.use('/api/sensors', sensorRoutes);
 app.use('/api/recipes', recipeRoutes);
@@ -211,20 +223,20 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/containers', containerRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Сервер запущено на порті ${PORT}`);
+  console.log(`РЎРµСЂРІРµСЂ Р·Р°РїСѓС‰РµРЅРѕ РЅР° РїРѕСЂС‚С– ${PORT}`);
 });
 
 
-     4. Графічні ілюстрації (рисунки)
-      - UML діаграма прецедентів для серверної частини; 
+4. Р“СЂР°С„С–С‡РЅС– С–Р»СЋСЃС‚СЂР°С†С–С— (СЂРёСЃСѓРЅРєРё)
+ - UML РґС–Р°РіСЂР°РјР° РїСЂРµС†РµРґРµРЅС‚С–РІ РґР»СЏ СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё; 
+ 
+Р РёСЃСѓРЅРѕРє 1 вЂ“ UML РґС–Р°РіСЂР°РјР°
+- ER РґС–Р°РіСЂР°РјР° СЃС‚РІРѕСЂРµРЅРѕС— Р‘Р”:
+ 
+Р РёСЃСѓРЅРѕРє 2 вЂ“  ER РґС–Р°РіСЂР°РјР° Р‘Р” Winery
+- Р”С–Р°РіСЂР°РјР° СЃС‚СЂСѓРєС‚СѓСЂРё Р‘Р”
+ 
+Р РёСЃСѓРЅРѕРє 3 вЂ“  Р”С–Р°РіСЂР°РјР° СЃС‚СЂСѓРєС‚СѓСЂРё Р‘Р” Winery
 
-Рисунок 1 – UML діаграма
-     - ER діаграма створеної БД:
-
-Рисунок 2 –  ER діаграма БД Winery
-     - Діаграма структури БД
-
-Рисунок 3 –  Діаграма структури БД Winery
-
-     Висновки: На поточній лабораторній роботі було розроблено базу даних для серверної частини програми моніторингу виробництва на виноробні та реалізовано запити до неї.
+Р’РёСЃРЅРѕРІРєРё: РќР° РїРѕС‚РѕС‡РЅС–Р№ Р»Р°Р±РѕСЂР°С‚РѕСЂРЅС–Р№ СЂРѕР±РѕС‚С– Р±СѓР»Рѕ СЂРѕР·СЂРѕР±Р»РµРЅРѕ Р±Р°Р·Сѓ РґР°РЅРёС… РґР»СЏ СЃРµСЂРІРµСЂРЅРѕС— С‡Р°СЃС‚РёРЅРё РїСЂРѕРіСЂР°РјРё РјРѕРЅС–С‚РѕСЂРёРЅРіСѓ РІРёСЂРѕР±РЅРёС†С‚РІР° РЅР° РІРёРЅРѕСЂРѕР±РЅС– С‚Р° СЂРµР°Р»С–Р·РѕРІР°РЅРѕ Р·Р°РїРёС‚Рё РґРѕ РЅРµС—.
 
